@@ -15,12 +15,12 @@ public class GameController {
     }
 
     @GetMapping("/game")
-    public Long createGame() {
-        return gameService.createGame();
+    public String startGame() {
+        return gameService.startGame();
     }
 
     @GetMapping("/game/{gameId}/guess/{number}")
-    public String guessNumber(@PathVariable Long gameId, @PathVariable Integer number) {
+    public String guessNumber(@PathVariable String gameId, @PathVariable int number) {
         return gameService.guessNumber(gameId, number);
     }
 }

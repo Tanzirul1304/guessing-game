@@ -5,39 +5,64 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 public class GameService {
 
-    private final Map<Long, Integer> gameNumbers = new HashMap<>();
-    private final Map<Long, Integer> gameAttempts = new HashMap<>();
-    private long nextGameId = 1;
+    private final Map<String, Integer> games = new HashMap<>();
+    private final Map<String, Integer> attempts = new HashMap<>();
+    private final Random random = new Random();
 
-    public Long createGame() {
-        long gameId = nextGameId++;
-        int randomNumber = new Random().nextInt(100) + 1;
+    public String startGame() {
+        String gameId = UUID.randomUUID().toString();
+        int secretNumber = random.nextInt(100) + 1;
 
-        gameNumbers.put(gameId, randomNumber);
-        gameAttempts.put(gameId, 0);
+        games.put(gameId, secretNumber);
+        attempts.put(gameId, 0);
 
         return gameId;
     }
 
-    public String guessNumber(Long gameId, Integer number) {
-        if (!gameNumbers.containsKey(gameId)) {
+    public String guessNumber(String gameId, int number) {
+        if (!games.containsKey(gameId)) {
             return "Game not found";
         }
 
-        int secretNumber = gameNumbers.get(gameId);
-        int attempts = gameAttempts.get(gameId) + 1;
-        gameAttempts.put(gameId, attempts);
+        int secretNumber = games.get(gameId);
+        int currentAttempts = attempts.get(gameId) + 1;
+        attempts.put(gameId, currentAttempts);
 
         if (secretNumber < number) {
             return "Nr is smaller";
-        } else if (secretNumber > number) {
+        }
+
+        if (secretNumber > number) {
             return "Nr is bigger";
-        } else {
-            return "Correct, it took you " + attempts + " times";
+        }
+
+        return "Correct, it took you " + currentAttempts + " times";
+    }
+
+    public static class NameRequest {
+
+        private String firstName;
+        private String lastName;
+
+        public String getFirstName() {
+            return firstName;
+        }
+
+        public void setFirstName(String firstName) {
+            this.firstName = firstName;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+
+        public void setLastName(String lastName) {
+            this.lastName = lastName;
         }
     }
 }
